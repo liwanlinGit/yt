@@ -21,7 +21,6 @@ target/
 *.name
 *.class
 /bin/
-*.sql
 
 # ............
 .metadata
