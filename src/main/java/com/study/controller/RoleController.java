@@ -1,11 +1,17 @@
 package com.study.controller;
 
 import com.github.pagehelper.PageInfo;
+import com.study.model.Resources;
 import com.study.model.Role;
 import com.study.model.RoleResources;
 import com.study.model.User;
 import com.study.service.RoleResourcesService;
 import com.study.service.RoleService;
+import com.study.util.DataGridResultInfo;
+import com.study.util.PageBean;
+import com.study.util.ResultUtil;
+
+import org.apache.shiro.SecurityUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +19,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,20 +34,12 @@ public class RoleController {
     @Resource
     private RoleResourcesService roleResourcesService;
 
-    @RequestMapping
-    public  Map<String,Object> getAll(Role role, String draw,
-                             @RequestParam(required = false, defaultValue = "1") int start,
-                             @RequestParam(required = false, defaultValue = "10") int length){
-
-        Map<String,Object> map = new HashMap<>();
-        PageInfo<Role> pageInfo = roleService.selectByPage(role, start, length);
-        map.put("draw",draw);
-        map.put("recordsTotal",pageInfo.getTotal());
-        map.put("recordsFiltered",pageInfo.getTotal());
-        map.put("data", pageInfo.getList());
-        return map;
+    @RequestMapping(value = "/getData")
+    public DataGridResultInfo getData(HttpServletRequest request, HttpServletResponse response,PageBean page){
+      List<Role> queryByType = roleService.selectByPage(page);
+      PageInfo<Role> pageInfo=new PageInfo<Role>(queryByType);
+      return ResultUtil.createDataGridResult(pageInfo.getTotal(), pageInfo.getList());
     }
-
     @RequestMapping("/rolesWithSelected")
     public List<Role> rolesWithSelected(Integer uid){
         return roleService.queryRoleListWithSelected(uid);

@@ -40,11 +40,12 @@
 		ORDER BY re.sort ASC
     </select>
     <select id="queryByType" resultType="com.study.model.Resources" parameterType="com.study.model.Resources">
-      	SELECT id,name,parentId,resUrl,type,sort
-		FROM resources where 1=1
+      	select t.* from(
+          SELECT r1.id,r1.name,r1.parentId,r1.resUrl,r1.type,r1.sort,r2.name as "parentName"
+		FROM resources  r1 left join resources r2 on r1.parentId=r2.id) t where 1=1
 		<if test="type!=null">
 		AND type= #{type}
 		</if>
-		ORDER BY sort ASC
+		order by sort
   </select>
 </mapper>

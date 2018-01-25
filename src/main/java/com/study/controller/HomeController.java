@@ -42,7 +42,7 @@ public class HomeController {
         UsernamePasswordToken token=new UsernamePasswordToken(user.getUsername(),user.getPassword());
         try {
             subject.login(token);
-            return "redirect:usersPage";
+            return "redirect:index";
         }catch (LockedAccountException lae) {
             token.clear();
             request.setAttribute("msg", "用户已经被锁定不能登录，请与管理员联系！");
@@ -52,6 +52,16 @@ public class HomeController {
             request.setAttribute("msg", "用户或密码不正确！");
             return "login";
         }
+    }
+    @RequestMapping(value={"/index",""})
+    public String index(HttpServletRequest request){
+      Map<String,Object> map = new HashMap<>();
+      Integer userid = (Integer) SecurityUtils.getSubject().getSession().getAttribute("userSessionId");
+      map.put("type",1);
+      map.put("userid",userid);
+      List<Resources> resourcesList = resourcesService.loadUserResources(map);
+      request.setAttribute("resources", resourcesList);
+      return "index";
     }
     @RequestMapping(value={"/usersPage",""})
     public String usersPage(HttpServletRequest request){

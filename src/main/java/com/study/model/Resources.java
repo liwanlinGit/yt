@@ -39,6 +39,19 @@ public class Resources implements Serializable{
 
     @Transient
     private String checked;//是否选中
+    
+    
+    private String parentName;
+    
+    
+    public String getParentName() {
+      return parentName;
+    }
+
+    public void setParentName(String parentName) {
+      this.parentName = parentName;
+    }
+
     /**
      * @return id
      */

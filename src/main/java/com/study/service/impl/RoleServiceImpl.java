@@ -6,6 +6,7 @@ import javax.annotation.Resource;
 
 import com.study.mapper.RoleMapper;
 import com.study.mapper.RoleResourcesMapper;
+
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -17,6 +18,8 @@ import com.github.pagehelper.PageInfo;
 import com.study.model.Role;
 import com.study.model.RoleResources;
 import com.study.service.RoleService;
+import com.study.util.PageBean;
+
 import tk.mybatis.mapper.entity.Example;
 import tk.mybatis.mapper.util.StringUtil;
 
@@ -34,13 +37,12 @@ public class RoleServiceImpl extends BaseService<Role> implements RoleService{
     }
 
     @Override
-    public PageInfo<Role> selectByPage(Role role, int start, int length) {
-        int page = start/length+1;
+    public List<Role> selectByPage(PageBean bean) {
         Example example = new Example(Role.class);
         //分页查询
-        PageHelper.startPage(page, length);
+        PageHelper.startPage(bean.getPage(), bean.getRows());
         List<Role> rolesList = selectByExample(example);
-        return new PageInfo<>(rolesList);
+        return rolesList;
     }
 
     @Override
@@ -54,5 +56,11 @@ public class RoleServiceImpl extends BaseService<Role> implements RoleService{
         criteria.andEqualTo("roleid",roleid);
         roleResourcesMapper.deleteByExample(example);
 
+    }
+
+    @Override
+    public List<Role> queryAll(PageBean bean) {
+      PageHelper.startPage(bean.getPage(), bean.getRows());
+      return roleMapper.queryAll();
     }
 }
